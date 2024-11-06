@@ -2,8 +2,10 @@
 {
     public class ContactDto
     {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Email { get; set; }
+        public string AccountName { get; set; }
+        public string ContactFirstName { get; set; }
+        public string ContactLastName { get; set; }
+        public string ContactEmail { get; set; }
     }
 }
+

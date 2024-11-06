@@ -24,5 +24,15 @@ namespace Incidents.Application.Services
             await _accountRepository.AddAsync(account);
             return account;
         }
+
+        public async Task UpdateAsync(Account account)
+        {
+            await _accountRepository.UpdateAsync(account);
+        }
+
+        public async Task DeleteAsync(Account account)
+        {
+            await _accountRepository.DeleteAsync(account);
+        }
     }
 }

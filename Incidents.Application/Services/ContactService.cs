@@ -43,5 +43,13 @@ namespace Incidents.Application.Services
 
             return contact;
         }
+        public async Task UpdateAsync(Contact contact)
+        {
+            await _contactRepository.UpdateAsync(contact);
+        }
+        public async Task DeleteAsync(Contact contact)
+        {
+            await _contactRepository.DeleteAsync(contact);
+        }
     }
 }

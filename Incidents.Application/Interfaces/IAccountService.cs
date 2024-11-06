@@ -6,5 +6,7 @@ namespace Incidents.Application.Interfaces
     {
         Task<Account> GetByNameAsync(string name);
         Task<Account> CreateAsync(string name);
+        Task UpdateAsync(Account account);
+        Task DeleteAsync(Account account);
     }
 }

@@ -2,6 +2,6 @@
 {
     public class AccountDto
     {
-        public string Name { get; set; }
+        public string AccountName { get; set; }
     }
 }

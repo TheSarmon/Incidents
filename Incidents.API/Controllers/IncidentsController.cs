@@ -20,20 +20,63 @@ namespace Incidents.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] IncidentDto incidentDto, [FromQuery] string accountName, [FromQuery] string contactEmail)
+        public async Task<IActionResult> CreateIncident([FromBody] IncidentDto incidentDto)
         {
-            var account = await _accountService.GetByNameAsync(accountName);
+            var account = await _accountService.GetByNameAsync(incidentDto.AccountName);
             if (account == null)
                 return NotFound("Account not found.");
 
-            var contact = await _contactService.GetByEmailAsync(contactEmail);
-            if (contact == null || contact.AccountId != account.Id)
+            var contact = await _contactService.GetByEmailAsync(incidentDto.ContactEmail);
+            if (contact == null)
             {
-                return NotFound("Contact not found or not linked to the specified account.");
+                contact = await _contactService.CreateOrUpdateAsync(
+                    incidentDto.ContactFirstName,
+                    incidentDto.ContactLastName,
+                    incidentDto.ContactEmail,
+                    account);
+            }
+            else
+            {
+                contact.FirstName = incidentDto.ContactFirstName;
+                contact.LastName = incidentDto.ContactLastName;
+
+                if (contact.AccountId != account.Id)
+                {
+                    contact.AccountId = account.Id;
+                    await _contactService.CreateOrUpdateAsync(contact.FirstName, contact.LastName, contact.Email, account);
+                }
             }
 
-            var incident = await _incidentService.CreateAsync(incidentDto.IncidentName, incidentDto.Description, account);
+            var incident = await _incidentService.CreateAsync(
+                incidentName: Guid.NewGuid().ToString(),
+                description: incidentDto.IncidentDescription,
+                account: account);
+
             return Ok(incident);
+        }
+
+        [HttpPut("{incidentName}")]
+        public async Task<IActionResult> Update(string incidentName, [FromBody] IncidentDto incidentDto)
+        {
+            var incident = await _incidentService.GetByIncidentNameAsync(incidentName);
+            if (incident == null)
+                return NotFound("Incident not found.");
+
+            incident.Description = incidentDto.IncidentDescription;
+            await _incidentService.UpdateAsync(incident);
+
+            return Ok(incident);
+        }
+
+        [HttpDelete("{incidentName}")]
+        public async Task<IActionResult> Delete(string incidentName)
+        {
+            var incident = await _incidentService.GetByIncidentNameAsync(incidentName);
+            if (incident == null)
+                return NotFound();
+
+            await _incidentService.DeleteAsync(incident);
+            return NoContent();
         }
     }
 }

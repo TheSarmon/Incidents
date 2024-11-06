@@ -9,6 +9,7 @@ namespace Incidents.Infrastructure.Repositories
         Task<Contact> GetByEmailAsync(string email);
         Task AddAsync(Contact contact);
         Task UpdateAsync(Contact contact);
+        Task DeleteAsync(Contact contact);
     }
 
     public class ContactRepository : IContactRepository
@@ -34,6 +35,12 @@ namespace Incidents.Infrastructure.Repositories
         public async Task UpdateAsync(Contact contact)
         {
             _context.Contacts.Update(contact);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(Contact contact)
+        {
+            _context.Contacts.Remove(contact);
             await _context.SaveChangesAsync();
         }
     }

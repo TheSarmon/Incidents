@@ -6,5 +6,7 @@ namespace Incidents.Application.Interfaces
     {
         Task<Contact> GetByEmailAsync(string email);
         Task<Contact> CreateOrUpdateAsync(string firstName, string lastName, string email, Account account);
+        Task UpdateAsync(Contact contact);
+        Task DeleteAsync(Contact contact);
     }
 }

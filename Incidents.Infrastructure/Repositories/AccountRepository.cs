@@ -8,6 +8,8 @@ namespace Incidents.Infrastructure.Repositories
     {
         Task<Account> GetByNameAsync(string name);
         Task AddAsync(Account account);
+        Task UpdateAsync(Account account);
+        Task DeleteAsync(Account account);
     }
 
     public class AccountRepository : IAccountRepository
@@ -30,6 +32,17 @@ namespace Incidents.Infrastructure.Repositories
         public async Task AddAsync(Account account)
         {
             await _context.Accounts.AddAsync(account);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateAsync(Account account)
+        {
+            _context.Accounts.Update(account);
+            await _context.SaveChangesAsync();
+        }
+        public async Task DeleteAsync(Account account)
+        {
+            _context.Accounts.Remove(account);
             await _context.SaveChangesAsync();
         }
     }
