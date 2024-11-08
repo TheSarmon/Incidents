@@ -20,7 +20,7 @@ namespace Incidents.API.Controllers
         {
             var account = await _accountService.GetByNameAsync(name);
             if (account == null)
-                return NotFound();
+                return NotFound("Account not found.");
 
             return Ok(new AccountDto { AccountName = account.Name });
         }
@@ -28,11 +28,10 @@ namespace Incidents.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] AccountDto accountDto)
         {
-            var existingAccount = await _accountService.GetByNameAsync(accountDto.AccountName);
-            if (existingAccount != null)
+            var account = await _accountService.CreateAsync(accountDto.AccountName);
+            if (account == null)
                 return Conflict("Account with the same name already exists.");
 
-            var account = await _accountService.CreateAsync(accountDto.AccountName);
             return CreatedAtAction(nameof(GetByName), new { name = account.Name }, account);
         }
 

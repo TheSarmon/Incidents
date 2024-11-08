@@ -40,6 +40,7 @@ namespace Incidents.Infrastructure.Repositories
             _context.Accounts.Update(account);
             await _context.SaveChangesAsync();
         }
+
         public async Task DeleteAsync(Account account)
         {
             _context.Accounts.Remove(account);

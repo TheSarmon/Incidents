@@ -7,10 +7,12 @@ namespace Incidents.Application.Services
     public class ContactService : IContactService
     {
         private readonly IContactRepository _contactRepository;
+        private readonly IAccountRepository _accountRepository;
 
-        public ContactService(IContactRepository contactRepository)
+        public ContactService(IContactRepository contactRepository, IAccountRepository accountRepository)
         {
             _contactRepository = contactRepository;
+            _accountRepository = accountRepository;
         }
 
         public async Task<Contact> GetByEmailAsync(string email)
@@ -43,10 +45,27 @@ namespace Incidents.Application.Services
 
             return contact;
         }
-        public async Task UpdateAsync(Contact contact)
+
+        public async Task<Contact> UpdateAsync(string email, string firstName, string lastName, string newEmail, string accountName)
         {
+            var contact = await _contactRepository.GetByEmailAsync(email);
+            if (contact == null)
+                return null;
+
+            var account = await _accountRepository.GetByNameAsync(accountName);
+            if (account == null)
+                return null;
+
+            contact.Email = newEmail;
+            contact.FirstName = firstName;
+            contact.LastName = lastName;
+            contact.AccountId = account.Id;
+
             await _contactRepository.UpdateAsync(contact);
+
+            return contact;
         }
+
         public async Task DeleteAsync(Contact contact)
         {
             await _contactRepository.DeleteAsync(contact);

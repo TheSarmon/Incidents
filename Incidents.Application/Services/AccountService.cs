@@ -20,6 +20,12 @@ namespace Incidents.Application.Services
 
         public async Task<Account> CreateAsync(string name)
         {
+            var existingAccount = await _accountRepository.GetByNameAsync(name);
+            if (existingAccount != null)
+            {
+                return null;
+            }
+
             var account = new Account { Name = name };
             await _accountRepository.AddAsync(account);
             return account;

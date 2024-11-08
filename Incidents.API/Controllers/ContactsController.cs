@@ -30,25 +30,18 @@ namespace Incidents.API.Controllers
         }
 
         [HttpPut("{email}")]
-        public async Task<IActionResult> Edit(string email, [FromBody] ContactDto contactDto)
+        public async Task<IActionResult> Update(string email, [FromBody] ContactDto contactDto)
         {
-            var contact = await _contactService.GetByEmailAsync(email);
-            if (contact == null)
-                return NotFound("Contact not found.");
+            var updatedContact = await _contactService.UpdateAsync(email, 
+                contactDto.ContactFirstName, 
+                contactDto.ContactLastName, 
+                contactDto.ContactEmail, 
+                contactDto.AccountName
+            );
+            if (updatedContact == null)
+                return NotFound("Contact or account not found.");
 
-            contact.FirstName = contactDto.ContactFirstName;
-            contact.LastName = contactDto.ContactLastName;
-            contact.Email = contactDto.ContactEmail;
-
-            var account = await _accountService.GetByNameAsync(contactDto.AccountName);
-            if (account == null)
-                return NotFound("Account for contact not found.");
-
-            contact.AccountId = account.Id;
-
-            await _contactService.UpdateAsync(contact);
-
-            return Ok(contact);
+            return Ok(updatedContact);
         }
 
         [HttpDelete("{email}")]

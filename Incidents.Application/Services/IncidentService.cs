@@ -7,10 +7,12 @@ namespace Incidents.Application.Services
     public class IncidentService : IIncidentService
     {
         private readonly IIncidentRepository _incidentRepository;
+        private readonly IAccountRepository _accountRepository;
 
-        public IncidentService(IIncidentRepository incidentRepository)
+        public IncidentService(IIncidentRepository incidentRepository, IAccountRepository accountRepository)
         {
             _incidentRepository = incidentRepository;
+            _accountRepository = accountRepository;
         }
 
         public async Task<Incident> GetByIncidentNameAsync(string incidentName)
@@ -18,16 +20,23 @@ namespace Incidents.Application.Services
             return await _incidentRepository.GetByIncidentNameAsync(incidentName);
         }
 
-        public async Task<Incident> CreateAsync(string incidentName, string description, Account account)
+        public async Task<Incident> CreateAsync(string accountName, string description)
         {
+            var account = await _accountRepository.GetByNameAsync(accountName);
+            if (account == null)
+            {
+                return null;
+            }
+
             var incident = new Incident
             {
-                IncidentName = incidentName,
+                IncidentName = Guid.NewGuid().ToString(),
                 Description = description,
                 AccountId = account.Id
             };
 
             await _incidentRepository.AddAsync(incident);
+
             return incident;
         }
 
